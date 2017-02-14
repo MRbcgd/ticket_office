@@ -28,6 +28,13 @@
 
         window.location.href='/'
       })
+      socket.on('cancel',function(data){
+        var $target=$('<div>[data-x='+data.x+'][data-y='+data.y+']')
+        $target.removeClass('disable')
+        $target.addClass('enable')
+
+        window.location.href='/'
+      })
     </script>
 
     <!-- 초기 좌석 생성 -->
@@ -36,17 +43,35 @@
         var onClickSeat =function(){//seat click시 발생 이벤트
           var x=$(this).attr('data-x')
           var y=$(this).attr('data-y')
+          var able=$(this).attr('class').split(' ')[1]
 
-          if(confirm('좌석을 예약하겠습니까?')){
-            $(this).off('click')
-            socket.emit('reserve',{
-              x:x,
-              y:y
-            })
+          console.log(able)
+
+          if(able =='enable'){
+            if(confirm('좌석을 예약하겠습니까?')){
+              $(this).off('click')
+              socket.emit('reserve',{
+                x:x,
+                y:y
+              })
+            }
+            else{
+              alert('취소되었습니다')
+            }
           }
-          else{
-            alert('취소되었습니다')
+          else if(able=='disable'){
+            if(confirm('예약을 취소하겠습니까?')){
+              $(this).off('click')
+              socket.emit('cancel',{
+                x:x,
+                y:y
+              })
+            }
+            else{
+              //
+            }
           }
+
         }
         // '/seats'에서 전송한 JSON 호출
         $.getJSON('/seats',{
@@ -64,7 +89,7 @@
                 $output.addClass('enable').on('click',onClickSeat)
               }
               else if(seat==2){//예약 불가능 자리
-                $output.addClass('disable')
+                $output.addClass('disable').on('click',onClickSeat)
               }
             })
             $line.appendTo('body')

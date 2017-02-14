@@ -40,4 +40,8 @@ io.sockets.on('connection',function(socket){
     seats[data.y][data.x]=2//server의 seat data 수정
     io.sockets.emit('reserve',data)
   })
+  socket.on('cancel',function(data){
+    seats[data.y][data.x]=1//server의 seat data 수정
+    io.sockets.emit('cancel',data)
+  })
 })
