@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TICKET_OFFICE</title>
+    <style>
+      .line { overflow: hidden;}
+      .seat{
+        margin : 2px; float:left;
+        width : 30px; height:30px;
+        border-radius: 3px;
+      }
+
+      .enable { background: gray;}
+      .enable hover {background: black;}
+      .disable {background: red;}
+    </style>
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- 소켓생성 -->
+    <script>
+      var socket=io.connect()
+
+      socket.on('reserve',function(data){
+
+      })
+    </script>
+    <!-- 초기 좌석 생성 -->
+    <script>
+      $(document).ready(function(){
+        var onClickSeat =function(){
+
+        }
+        // '/seats'에서 전송한 JSON 호출
+        $.getJSON('/seats',{
+          dummy : new Date().getTime()//IE가 URL 불러오면 이전 데이터를 불러오기 때문에
+        },function(data){//y,x 축 관리
+          $.each(data,function(indexY,line){//y축
+            var $line=$('<div></div>').addClass('line')//line 생성
+            $.each(line,function(indexX,seat){//seat 생성
+              var $output=$('<div></div>',{
+                'class':'seat',
+                'data-x':indexX,//seat 마다 고유 좌표 x
+                'data-y':indexY//seat 마다 고유 좌표 y
+              }).appendTo($line)
+              if(seat==1){//예약 가능 자리 -> click 이벤트 리스너
+                $output.addClass('enable').on('click',onClickSeat)
+              }
+              else if(seat==2){//예약 불가능 자리
+                $output.addClass('disable')
+              }
+            })
+            $line.appendTo('body')
+          })
+        })
+      })
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>
