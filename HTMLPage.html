@@ -22,14 +22,31 @@
       var socket=io.connect()
 
       socket.on('reserve',function(data){
+        var $target=$('<div>[data-x='+data.x+'][data-y='+data.y+']')
+        $target.removeClass('enable')
+        $target.addClass('disable')
 
+        window.location.href='/'
       })
     </script>
+
     <!-- 초기 좌석 생성 -->
     <script>
       $(document).ready(function(){
-        var onClickSeat =function(){
+        var onClickSeat =function(){//seat click시 발생 이벤트
+          var x=$(this).attr('data-x')
+          var y=$(this).attr('data-y')
 
+          if(confirm('좌석을 예약하겠습니까?')){
+            $(this).off('click')
+            socket.emit('reserve',{
+              x:x,
+              y:y
+            })
+          }
+          else{
+            alert('취소되었습니다')
+          }
         }
         // '/seats'에서 전송한 JSON 호출
         $.getJSON('/seats',{
